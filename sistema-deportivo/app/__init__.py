@@ -8,8 +8,8 @@ def create_app():
     app.config.from_object(Config)
 
     # --- Registro de blueprints (se irán agregando en cada fase) ---
-    # from app.routes.disciplinas import bp as disciplinas_bp
-    # app.register_blueprint(disciplinas_bp)
+    from app.routes.disciplinas import bp as disciplinas_bp
+    app.register_blueprint(disciplinas_bp)
 
     @app.route("/")
     def index():
