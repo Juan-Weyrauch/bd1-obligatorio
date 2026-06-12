@@ -6,8 +6,8 @@ from config import DB_CONFIG
 def get_connection():
     """Devuelve una conexión nueva a MySQL.
 
-    Usala directamente cuando necesites controlar la transacción a mano
-    (por ejemplo, inscripciones con SELECT ... FOR UPDATE)."""
+    Usar directamente cuando necesites controlar la transacción a mano
+    (por ejemplo: inscripciones con SELECT ... FOR UPDATE)."""
     return mysql.connector.connect(**DB_CONFIG)
 
 
