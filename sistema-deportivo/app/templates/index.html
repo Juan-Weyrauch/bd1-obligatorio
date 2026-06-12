@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Inicio{% endblock %}
+{% block contenido %}
+<div class="row">
+  <div class="col-md-8 mx-auto">
+    <h1 class="mb-4">Sistema de Gestión de Actividades Deportivas Universitarias</h1>
+    
+    <p class="lead mb-5">Bienvenido. Selecciona un módulo para comenzar:</p>
+    
+    <div class="row g-4">
+      <div class="col-md-6">
+        <div class="card h-100 shadow-sm">
+          <div class="card-body">
+            <h5 class="card-title">📚 Disciplinas Deportivas</h5>
+            <p class="card-text">Gestiona las disciplinas disponibles (Fútbol, Volleyball, Yoga, etc.)</p>
+            <a href="{{ url_for('disciplinas.listar') }}" class="btn btn-primary w-100">Ir a Disciplinas</a>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-6">
+        <div class="card h-100 shadow-sm">
+          <div class="card-body">
+            <h5 class="card-title">🏟️ Espacios Deportivos</h5>
+            <p class="card-text">Gestiona los espacios físicos (canchas, gimnasios, etc.)</p>
+            <a href="{{ url_for('espacios.listar') }}" class="btn btn-primary w-100">Ir a Espacios</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
