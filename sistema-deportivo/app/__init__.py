@@ -6,14 +6,20 @@ def create_app():
     """Construye y configura la aplicación Flask (patrón app factory)."""
     app = Flask(__name__)
     app.config.from_object(Config)
+    
+    # Asegurar UTF-8 en respuestas
+    app.config['JSON_AS_ASCII'] = False
 
     # --- Registro de blueprints (se irán agregando en cada fase) ---
     from app.routes.disciplinas import bp as disciplinas_bp
+    from app.routes.espacios import bp as espacios_bp
     app.register_blueprint(disciplinas_bp)
+    app.register_blueprint(espacios_bp)
 
     @app.route("/")
     def index():
-        return "<h1>Sistema de Actividades Deportivas</h1><p>App funcionando.</p>"
+        from flask import render_template
+        return render_template("index.html")
 
     @app.route("/health")
     def health():

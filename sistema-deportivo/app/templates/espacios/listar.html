@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Espacios{% endblock %}
+{% block contenido %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="h3 mb-0">Espacios deportivos</h1>
+  <a href="{{ url_for('espacios.nuevo') }}" class="btn btn-primary">Nuevo espacio</a>
+</div>
+
+{% if espacios %}
+<table class="table table-striped align-middle">
+  <thead>
+    <tr><th>Nombre</th><th>Ubicación</th><th class="text-end">Acciones</th></tr>
+  </thead>
+  <tbody>
+    {% for e in espacios %}
+    <tr>
+      <td>{{ e.nombre }}</td>
+      <td>{{ e.ubicacion }}</td>
+      <td class="text-end">
+        <a href="{{ url_for('espacios.editar', id_espacio=e.id_espacio) }}"
+           class="btn btn-sm btn-outline-secondary">Editar</a>
+        <form method="post"
+              action="{{ url_for('espacios.eliminar', id_espacio=e.id_espacio) }}"
+              class="d-inline"
+              onsubmit="return confirm('¿Eliminar el espacio «{{ e.nombre }}»?');">
+          <button type="submit" class="btn btn-sm btn-outline-danger">Eliminar</button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p class="text-muted">No hay espacios cargados todavía.</p>
+{% endif %}
+{% endblock %}

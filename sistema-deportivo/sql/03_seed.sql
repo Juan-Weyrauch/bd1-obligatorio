@@ -18,7 +18,7 @@ INSERT INTO carrera (nombre, id_facultad) VALUES
 -- Disciplinas (del enunciado)
 INSERT INTO disciplina (nombre) VALUES
     ('Fútbol'), ('Básquetbol'), ('Atletismo'),
-    ('Vóleibol'), ('Yoga'), ('Funcional'), ('Gimnasio');
+    ('Volleyball'), ('Yoga'), ('Funcional'), ('Gimnasio');
 
 -- Espacios
 INSERT INTO espacio (nombre, ubicacion) VALUES
