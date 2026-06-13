@@ -3,6 +3,8 @@
 -- Ejecutar DESPUÉS de 01_schema.sql
 -- ============================================================
 USE deportes_db;
+SET NAMES utf8mb4;
+SET CHARACTER SET utf8mb4;
 
 -- Facultades
 INSERT INTO facultad (nombre) VALUES
