@@ -4,4 +4,3 @@ Para correr el programa:
 2.2) Si lo necesitas: python.exe -m pip install --upgrade pip 
 4) python -m pip show python-dotenv 
 5) python -c "from importlib.metadata import version; print(version('python-dotenv'))" -> 1.0.1
-
