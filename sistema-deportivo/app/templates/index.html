@@ -27,6 +27,36 @@
           </div>
         </div>
       </div>
+
+      <div class="col-md-6">
+        <div class="card h-100 shadow-sm">
+          <div class="card-body">
+            <h5 class="card-title">🏫 Facultades</h5>
+            <p class="card-text">Gestiona las facultades que organizan carreras y estudiantes.</p>
+            <a href="{{ url_for('facultades.listar') }}" class="btn btn-primary w-100">Ir a Facultades</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="card h-100 shadow-sm">
+          <div class="card-body">
+            <h5 class="card-title">🎓 Carreras</h5>
+            <p class="card-text">Gestiona las carreras y su relacion con cada facultad.</p>
+            <a href="{{ url_for('carreras.listar') }}" class="btn btn-primary w-100">Ir a Carreras</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="card h-100 shadow-sm">
+          <div class="card-body">
+            <h5 class="card-title">🧑‍🎓 Estudiantes</h5>
+            <p class="card-text">Gestiona estudiantes, su documento, email y carrera asociada.</p>
+            <a href="{{ url_for('estudiantes.listar') }}" class="btn btn-primary w-100">Ir a Estudiantes</a>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>

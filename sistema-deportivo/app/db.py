@@ -6,9 +6,15 @@ from config import DB_CONFIG
 def get_connection():
     """Devuelve una conexión nueva a MySQL.
 
-    Usar directamente cuando necesites controlar la transacción a mano
-    (por ejemplo: inscripciones con SELECT ... FOR UPDATE)."""
-    return mysql.connector.connect(**DB_CONFIG)
+    Usala directamente cuando necesites controlar la transacción a mano
+    (por ejemplo, inscripciones con SELECT ... FOR UPDATE)."""
+    conn = mysql.connector.connect(**DB_CONFIG)
+    # Forzar UTF-8 en la conexión
+    cursor = conn.cursor()
+    cursor.execute("SET NAMES utf8mb4")
+    cursor.execute("SET CHARACTER SET utf8mb4")
+    cursor.close()
+    return conn
 
 
 @contextmanager
