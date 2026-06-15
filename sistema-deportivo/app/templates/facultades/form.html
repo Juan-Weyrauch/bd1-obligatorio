@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}{{ "Editar" if modo == "editar" else "Nueva" }} facultad{% endblock %}
+{% block contenido %}
+<h1 class="h3 mb-3">{{ "Editar" if modo == "editar" else "Nueva" }} facultad</h1>
+
+<form method="post" class="col-md-6">
+  <div class="mb-3">
+    <label for="nombre" class="form-label">Nombre</label>
+    <input type="text" class="form-control" id="nombre" name="nombre"
+           maxlength="100" required
+           value="{{ facultad.nombre if facultad else '' }}">
+    <div class="form-text">Obligatorio. Maximo 100 caracteres. No se puede repetir.</div>
+  </div>
+  <button type="submit" class="btn btn-primary">Guardar</button>
+  <a href="{{ url_for('facultades.listar') }}" class="btn btn-link">Cancelar</a>
+</form>
+{% endblock %}
