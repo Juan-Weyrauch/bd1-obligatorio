@@ -13,8 +13,10 @@ def create_app():
     # --- Registro de blueprints (se irán agregando en cada fase) ---
     from app.routes.disciplinas import bp as disciplinas_bp
     from app.routes.espacios import bp as espacios_bp
+    from app.routes.actividades import bp as actividades_bp
     app.register_blueprint(disciplinas_bp)
     app.register_blueprint(espacios_bp)
+    app.register_blueprint(actividades_bp)
 
     @app.route("/")
     def index():
