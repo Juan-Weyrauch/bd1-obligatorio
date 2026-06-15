@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Nueva inscripcion{% endblock %}
+{% block contenido %}
+<h1 class="h3 mb-3">Nueva inscripcion</h1>
+
+<form method="post" class="col-md-8">
+  <div class="mb-3">
+    <label for="id_estudiante" class="form-label">Estudiante</label>
+    <select class="form-select" id="id_estudiante" name="id_estudiante" required>
+      <option value="">Selecciona un estudiante</option>
+      {% for estudiante in estudiantes %}
+      <option value="{{ estudiante.id_estudiante }}"
+              {% if inscripcion and inscripcion.id_estudiante|string == estudiante.id_estudiante|string %}selected{% endif %}>
+        {{ estudiante.apellido }}, {{ estudiante.nombre }} ({{ estudiante.documento }})
+      </option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <div class="mb-3">
+    <label for="id_actividad" class="form-label">Actividad</label>
+    <select class="form-select" id="id_actividad" name="id_actividad" required>
+      <option value="">Selecciona una actividad</option>
+      {% for actividad in actividades %}
+      <option value="{{ actividad.id_actividad }}"
+              {% if inscripcion and inscripcion.id_actividad|string == actividad.id_actividad|string %}selected{% endif %}>
+        {{ actividad.nombre }} - {{ actividad.disciplina_nombre }} (cupo {{ actividad.cupo_maximo }})
+      </option>
+      {% endfor %}
+    </select>
+    <div class="form-text">Solo se muestran actividades abiertas.</div>
+  </div>
+
+  <button type="submit" class="btn btn-primary">Guardar</button>
+  <a href="{{ url_for('inscripciones.listar') }}" class="btn btn-link">Cancelar</a>
+</form>
+{% endblock %}

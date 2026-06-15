@@ -28,6 +28,26 @@ def listar():
         return cur.fetchall()
 
 
+def listar_para_inscripciones():
+    """Actividades abiertas para usar en el formulario de inscripciones."""
+    with get_cursor() as cur:
+        cur.execute(
+            """
+            SELECT
+                a.id_actividad,
+                a.nombre,
+                a.cupo_maximo,
+                a.estado,
+                d.nombre AS disciplina_nombre
+            FROM actividad a
+            JOIN disciplina d ON d.id_disciplina = a.id_disciplina
+            WHERE a.estado = 'abierta'
+            ORDER BY a.nombre
+            """
+        )
+        return cur.fetchall()
+
+
 def obtener_por_id(id_actividad):
     """Una actividad por su PK, o None si no existe."""
     with get_cursor() as cur:

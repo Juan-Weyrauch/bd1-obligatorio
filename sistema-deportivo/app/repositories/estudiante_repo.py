@@ -17,6 +17,23 @@ def listar():
         return cur.fetchall()
 
 
+def listar_para_formulario():
+    """Estudiantes para usar en selects de formularios."""
+    with get_cursor() as cur:
+        cur.execute(
+            """
+            SELECT
+                id_estudiante,
+                documento,
+                nombre,
+                apellido
+            FROM estudiante
+            ORDER BY apellido, nombre
+            """
+        )
+        return cur.fetchall()
+
+
 def obtener_por_id(id_estudiante):
     """Un estudiante por su PK, o None si no existe."""
     with get_cursor() as cur:
