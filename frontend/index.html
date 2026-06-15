@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Deportes UCU</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
+</head>
+
+<body>
+
+    <div class="app">
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <div class="logo">
+                <div class="logo-icon"><i class="ti ti-trophy"></i></div>
+                <div>
+                    <div class="logo-text">Deportes</div>
+                    <div class="logo-sub">UCU · Sistema</div>
+                </div>
+            </div>
+
+            <div class="nav-section">General</div>
+            <div class="nav-item active" onclick="mostrarSeccion('inicio')">
+                <i class="ti ti-layout-dashboard"></i> Inicio
+            </div>
+            <div class="nav-item" onclick="mostrarSeccion('estudiantes')">
+                <i class="ti ti-users"></i> Estudiantes
+            </div>
+            <div class="nav-item" onclick="mostrarSeccion('actividades')">
+                <i class="ti ti-run"></i> Actividades
+            </div>
+            <div class="nav-item" onclick="mostrarSeccion('inscripciones')">
+                <i class="ti ti-clipboard-list"></i> Inscripciones
+            </div>
+            <div class="nav-item" onclick="mostrarSeccion('asistencias')">
+                <i class="ti ti-calendar-check"></i> Asistencias
+            </div>
+
+            <div class="nav-section">Configuración</div>
+            <div class="nav-item" onclick="mostrarSeccion('disciplinas')">
+                <i class="ti ti-category-2"></i> Disciplinas
+            </div>
+            <div class="nav-item" onclick="mostrarSeccion('espacios')">
+                <i class="ti ti-map-pin"></i> Espacios
+            </div>
+            <div class="nav-item" onclick="mostrarSeccion('reportes')">
+                <i class="ti ti-chart-bar"></i> Reportes
+            </div>
+        </aside>
+
+        <!-- CONTENIDO PRINCIPAL -->
+        <main class="main">
+
+            <!-- INICIO -->
+            <section id="seccion-inicio" class="seccion activa">
+                <div class="topbar">
+                    <div>
+                        <h1 class="page-title">Panel principal</h1>
+                        <p class="page-sub">Sistema de gestión de actividades deportivas</p>
+                    </div>
+                </div>
+                <div class="stats" id="stats-inicio">
+                    <div class="stat-card">
+                        <div class="stat-label">Estudiantes</div>
+                        <div class="stat-value" id="stat-estudiantes">—</div>
+                        <div class="stat-sub">registrados</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Actividades abiertas</div>
+                        <div class="stat-value" id="stat-actividades">—</div>
+                        <div class="stat-sub">disponibles</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Inscripciones</div>
+                        <div class="stat-value" id="stat-inscripciones">—</div>
+                        <div class="stat-sub">confirmadas</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ESTUDIANTES -->
+            <section id="seccion-estudiantes" class="seccion">
+                <div class="topbar">
+                    <div>
+                        <h1 class="page-title">Estudiantes</h1>
+                        <p class="page-sub">Gestión de estudiantes registrados</p>
+                    </div>
+                    <button class="btn-primary" onclick="abrirModal('modal-estudiante')">
+                        <i class="ti ti-plus"></i> Nuevo estudiante
+                    </button>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">Lista de estudiantes</span>
+                    </div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Documento</th>
+                                    <th>Nombre</th>
+                                    <th>Apellido</th>
+                                    <th>Email</th>
+                                    <th>Carrera</th>
+                                    <th>Facultad</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabla-estudiantes"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ACTIVIDADES -->
+            <section id="seccion-actividades" class="seccion">
+                <div class="topbar">
+                    <div>
+                        <h1 class="page-title">Actividades</h1>
+                        <p class="page-sub">Gestión de actividades deportivas</p>
+                    </div>
+                    <button class="btn-primary" onclick="abrirModal('modal-actividad')">
+                        <i class="ti ti-plus"></i> Nueva actividad
+                    </button>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">Lista de actividades</span>
+                    </div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Disciplina</th>
+                                    <th>Espacio</th>
+                                    <th>Día</th>
+                                    <th>Horario</th>
+                                    <th>Cupo</th>
+                                    <th>Estado</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabla-actividades"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- INSCRIPCIONES -->
+            <section id="seccion-inscripciones" class="seccion">
+                <div class="topbar">
+                    <div>
+                        <h1 class="page-title">Inscripciones</h1>
+                        <p class="page-sub">Gestión de inscripciones a actividades</p>
+                    </div>
+                    <button class="btn-primary" onclick="abrirModal('modal-inscripcion')">
+                        <i class="ti ti-plus"></i> Nueva inscripción
+                    </button>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">Lista de inscripciones</span>
+                    </div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Estudiante</th>
+                                    <th>Actividad</th>
+                                    <th>Fecha</th>
+                                    <th>Estado</th>
+                                    <th>Posición espera</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabla-inscripciones"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ASISTENCIAS -->
+            <section id="seccion-asistencias" class="seccion">
+                <div class="topbar">
+                    <div>
+                        <h1 class="page-title">Asistencias</h1>
+                        <p class="page-sub">Registro de asistencia por actividad</p>
+                    </div>
+                    <button class="btn-primary" onclick="abrirModal('modal-asistencia')">
+                        <i class="ti ti-plus"></i> Registrar asistencia
+                    </button>
+                </div>
+            </section>
+
+            <!-- DISCIPLINAS -->
+            <section id="seccion-disciplinas" class="seccion">
+                <div class="topbar">
+                    <div>
+                        <h1 class="page-title">Disciplinas</h1>
+                        <p class="page-sub">Gestión de disciplinas deportivas</p>
+                    </div>
+                    <button class="btn-primary" onclick="abrirModal('modal-disciplina')">
+                        <i class="ti ti-plus"></i> Nueva disciplina
+                    </button>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">Lista de disciplinas</span>
+                    </div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabla-disciplinas"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ESPACIOS -->
+            <section id="seccion-espacios" class="seccion">
+                <div class="topbar">
+                    <div>
+                        <h1 class="page-title">Espacios</h1>
+                        <p class="page-sub">Gestión de espacios deportivos</p>
+                    </div>
+                    <button class="btn-primary" onclick="abrirModal('modal-espacio')">
+                        <i class="ti ti-plus"></i> Nuevo espacio
+                    </button>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">Lista de espacios</span>
+                    </div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Ubicación</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabla-espacios"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- REPORTES -->
+            <section id="seccion-reportes" class="seccion">
+                <div class="topbar">
+                    <div>
+                        <h1 class="page-title">Reportes</h1>
+                        <p class="page-sub">Consultas y estadísticas del sistema</p>
+                    </div>
+                </div>
+                <div class="reportes-grid">
+                    <div class="card reporte-card" onclick="cargarReporte('inscriptos-por-actividad')">
+                        <div class="card-header"><span class="card-title">Inscriptos por actividad</span></div>
+                        <div class="reporte-body" id="reporte-inscriptos-por-actividad"></div>
+                    </div>
+                    <div class="card reporte-card" onclick="cargarReporte('cupos-disponibles')">
+                        <div class="card-header"><span class="card-title">Cupos disponibles</span></div>
+                        <div class="reporte-body" id="reporte-cupos-disponibles"></div>
+                    </div>
+                    <div class="card reporte-card" onclick="cargarReporte('inscriptos-por-disciplina')">
+                        <div class="card-header"><span class="card-title">Inscriptos por disciplina</span></div>
+                        <div class="reporte-body" id="reporte-inscriptos-por-disciplina"></div>
+                    </div>
+                    <div class="card reporte-card" onclick="cargarReporte('inscriptos-por-carrera')">
+                        <div class="card-header"><span class="card-title">Inscriptos por carrera</span></div>
+                        <div class="reporte-body" id="reporte-inscriptos-por-carrera"></div>
+                    </div>
+                    <div class="card reporte-card" onclick="cargarReporte('ocupacion')">
+                        <div class="card-header"><span class="card-title">Ocupación por actividad</span></div>
+                        <div class="reporte-body" id="reporte-ocupacion"></div>
+                    </div>
+                    <div class="card reporte-card" onclick="cargarReporte('asistencia')">
+                        <div class="card-header"><span class="card-title">Asistencia por actividad</span></div>
+                        <div class="reporte-body" id="reporte-asistencia"></div>
+                    </div>
+                    <div class="card reporte-card" onclick="cargarReporte('inasistencias')">
+                        <div class="card-header"><span class="card-title">Estudiantes con 3+ inasistencias</span></div>
+                        <div class="reporte-body" id="reporte-inasistencias"></div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- MODALES -->
+
+    <!-- Modal estudiante -->
+    <div class="modal-overlay" id="modal-estudiante">
+        <div class="modal">
+            <div class="modal-header">
+                <span class="modal-title" id="titulo-modal-estudiante">Nuevo estudiante</span>
+                <button class="modal-close" onclick="cerrarModal('modal-estudiante')"><i class="ti ti-x"></i></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="est-id" />
+                <div class="form-group">
+                    <label>Documento</label>
+                    <input type="text" id="est-documento" placeholder="Ej: 50001001" />
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Nombre</label>
+                        <input type="text" id="est-nombre" placeholder="Nombre" />
+                    </div>
+                    <div class="form-group">
+                        <label>Apellido</label>
+                        <input type="text" id="est-apellido" placeholder="Apellido" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="est-email" placeholder="correo@uni.edu" />
+                </div>
+                <div class="form-group">
+                    <label>Carrera</label>
+                    <select id="est-carrera"></select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="cerrarModal('modal-estudiante')">Cancelar</button>
+                <button class="btn-primary" onclick="guardarEstudiante()">Guardar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal actividad -->
+    <div class="modal-overlay" id="modal-actividad">
+        <div class="modal">
+            <div class="modal-header">
+                <span class="modal-title" id="titulo-modal-actividad">Nueva actividad</span>
+                <button class="modal-close" onclick="cerrarModal('modal-actividad')"><i class="ti ti-x"></i></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="act-id" />
+                <div class="form-group">
+                    <label>Nombre</label>
+                    <input type="text" id="act-nombre" placeholder="Ej: Fútbol recreativo mixto" />
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Disciplina</label>
+                        <select id="act-disciplina"></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Espacio</label>
+                        <select id="act-espacio"></select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Cupo máximo</label>
+                        <input type="number" id="act-cupo" placeholder="20" min="1" />
+                    </div>
+                    <div class="form-group">
+                        <label>Día</label>
+                        <select id="act-dia">
+                            <option value="lunes">Lunes</option>
+                            <option value="martes">Martes</option>
+                            <option value="miercoles">Miércoles</option>
+                            <option value="jueves">Jueves</option>
+                            <option value="viernes">Viernes</option>
+                            <option value="sabado">Sábado</option>
+                            <option value="domingo">Domingo</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Horario</label>
+                        <input type="time" id="act-horario" />
+                    </div>
+                    <div class="form-group">
+                        <label>Estado</label>
+                        <select id="act-estado">
+                            <option value="abierta">Abierta</option>
+                            <option value="cerrada">Cerrada</option>
+                            <option value="finalizada">Finalizada</option>
+                            <option value="cancelada">Cancelada</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="cerrarModal('modal-actividad')">Cancelar</button>
+                <button class="btn-primary" onclick="guardarActividad()">Guardar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal inscripcion -->
+    <div class="modal-overlay" id="modal-inscripcion">
+        <div class="modal">
+            <div class="modal-header">
+                <span class="modal-title">Nueva inscripción</span>
+                <button class="modal-close" onclick="cerrarModal('modal-inscripcion')"><i class="ti ti-x"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Estudiante</label>
+                    <select id="ins-estudiante"></select>
+                </div>
+                <div class="form-group">
+                    <label>Actividad</label>
+                    <select id="ins-actividad"></select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="cerrarModal('modal-inscripcion')">Cancelar</button>
+                <button class="btn-primary" onclick="guardarInscripcion()">Inscribir</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal asistencia -->
+    <div class="modal-overlay" id="modal-asistencia">
+        <div class="modal">
+            <div class="modal-header">
+                <span class="modal-title">Registrar asistencia</span>
+                <button class="modal-close" onclick="cerrarModal('modal-asistencia')"><i class="ti ti-x"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Inscripción (estudiante confirmado)</label>
+                    <select id="asi-inscripcion"></select>
+                </div>
+                <div class="form-group">
+                    <label>Fecha</label>
+                    <input type="date" id="asi-fecha" />
+                </div>
+                <div class="form-group">
+                    <label>Presente</label>
+                    <select id="asi-presente">
+                        <option value="1">Sí</option>
+                        <option value="0">No</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="cerrarModal('modal-asistencia')">Cancelar</button>
+                <button class="btn-primary" onclick="guardarAsistencia()">Registrar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal disciplina -->
+    <div class="modal-overlay" id="modal-disciplina">
+        <div class="modal modal-sm">
+            <div class="modal-header">
+                <span class="modal-title" id="titulo-modal-disciplina">Nueva disciplina</span>
+                <button class="modal-close" onclick="cerrarModal('modal-disciplina')"><i class="ti ti-x"></i></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="dis-id" />
+                <div class="form-group">
+                    <label>Nombre</label>
+                    <input type="text" id="dis-nombre" placeholder="Ej: Fútbol" />
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="cerrarModal('modal-disciplina')">Cancelar</button>
+                <button class="btn-primary" onclick="guardarDisciplina()">Guardar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal espacio -->
+    <div class="modal-overlay" id="modal-espacio">
+        <div class="modal modal-sm">
+            <div class="modal-header">
+                <span class="modal-title" id="titulo-modal-espacio">Nuevo espacio</span>
+                <button class="modal-close" onclick="cerrarModal('modal-espacio')"><i class="ti ti-x"></i></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="esp-id" />
+                <div class="form-group">
+                    <label>Nombre</label>
+                    <input type="text" id="esp-nombre" placeholder="Ej: Cancha principal" />
+                </div>
+                <div class="form-group">
+                    <label>Ubicación</label>
+                    <input type="text" id="esp-ubicacion" placeholder="Ej: Sede central" />
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="cerrarModal('modal-espacio')">Cancelar</button>
+                <button class="btn-primary" onclick="guardarEspacio()">Guardar</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
