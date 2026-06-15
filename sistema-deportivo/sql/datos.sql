@@ -1,34 +1,28 @@
--- Datos iniciales
-
+-- datos.sql  --  Datos iniciales
 USE deportes_db;
 SET NAMES utf8mb4;
 SET CHARACTER SET utf8mb4;
 
--- Facultades
 INSERT INTO facultad (nombre) VALUES
     ('Facultad de Ingeniería'),
     ('Facultad de Ciencias Económicas');
 
--- Carreras
 INSERT INTO carrera (nombre, id_facultad) VALUES
     ('Ingeniería en Sistemas', 1),
     ('Ingeniería Civil', 1),
     ('Contador Público', 2);
 
--- Disciplinas
 INSERT INTO disciplina (nombre) VALUES
     ('Fútbol'), ('Básquetbol'), ('Atletismo'),
     ('Volleyball'), ('Yoga'), ('Funcional'), ('Gimnasio');
 
--- Espacios
 INSERT INTO espacio (nombre, ubicacion) VALUES
     ('Cancha principal', 'Sede central'),
     ('Gimnasio cubierto', 'Sede central'),
     ('Pista de atletismo', 'Anexo deportivo');
 
--- Datos de ejemplo para pruebas
 INSERT INTO estudiante (documento, nombre, apellido, email, id_carrera) VALUES
-    ('50001001', 'Ana',  'Pérez', 'ana.perez@uni.edu',  1),
+    ('50001001', 'Ana', 'Pérez', 'ana.perez@uni.edu', 1),
     ('50001002', 'Luis', 'Gómez', 'luis.gomez@uni.edu', 2);
 
 INSERT INTO actividad (nombre, id_disciplina, id_espacio, cupo_maximo, dia_semana, horario, estado) VALUES
