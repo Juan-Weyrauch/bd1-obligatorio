@@ -1,3 +1,4 @@
+from datetime import timedelta
 from flask import Flask
 from config import Config
 
@@ -9,6 +10,19 @@ def create_app():
     
     # Asegurar UTF-8 en respuestas
     app.config['JSON_AS_ASCII'] = False
+
+    @app.template_filter("formatear_hora")
+    def formatear_hora(valor):
+        """Devuelve una hora en formato HH:MM para templates."""
+        if valor is None:
+            return ""
+        if isinstance(valor, timedelta):
+            total_seconds = int(valor.total_seconds())
+            horas = total_seconds // 3600
+            minutos = (total_seconds % 3600) // 60
+            return f"{horas:02d}:{minutos:02d}"
+        texto = str(valor)
+        return texto[:5]
 
     # --- Registro de blueprints (se irán agregando en cada fase) ---
     from app.routes.disciplinas import bp as disciplinas_bp

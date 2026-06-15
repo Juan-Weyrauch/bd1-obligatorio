@@ -28,7 +28,7 @@
       <td>{{ a.espacio_nombre }} ({{ a.espacio_ubicacion }})</td>
       <td>{{ a.cupo_maximo }}</td>
       <td>{{ a.dia_semana|capitalize }}</td>
-      <td>{{ a.horario }}</td>
+      <td>{{ a.horario|formatear_hora }}</td>
       <td>{{ a.estado|capitalize }}</td>
       <td class="text-end">
         <a href="{{ url_for('actividades.editar', id_actividad=a.id_actividad) }}"

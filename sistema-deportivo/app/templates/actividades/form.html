@@ -64,7 +64,7 @@
     <div class="col-md-4 mb-3">
       <label for="horario" class="form-label">Horario</label>
       <input type="time" class="form-control" id="horario" name="horario" required
-             value="{{ actividad.horario if actividad else '' }}">
+             value="{{ actividad.horario|formatear_hora if actividad else '' }}">
     </div>
   </div>
 
