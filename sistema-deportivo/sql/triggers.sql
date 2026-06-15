@@ -1,0 +1,1 @@
+-- para mi no hay que usar triggers, se soluciona desde la app - belu
