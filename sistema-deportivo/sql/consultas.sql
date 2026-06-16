@@ -1,8 +1,5 @@
--- ============================================================
 -- Consultas obligatorias del sistema (reportes)
--- Espejo exacto de app/repositories/reporte_repo.py
 -- Estado que cuenta como inscripto efectivo: 'confirmada'
--- ============================================================
 
 -- 1) Actividades con mayor cantidad de inscriptos confirmados
 SELECT a.nombre AS actividad,
