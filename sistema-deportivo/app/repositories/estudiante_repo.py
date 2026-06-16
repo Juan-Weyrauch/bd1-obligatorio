@@ -8,9 +8,11 @@ def listar():
         cur.execute(
             """
             SELECT e.id_estudiante, e.documento, e.nombre, e.apellido, e.email,
-                   e.id_carrera, c.nombre AS carrera_nombre
+                   e.id_carrera, c.nombre AS carrera_nombre,
+                   f.nombre AS facultad_nombre
             FROM estudiante e
             JOIN carrera c ON c.id_carrera = e.id_carrera
+            JOIN facultad f ON f.id_facultad = c.id_facultad
             ORDER BY e.apellido, e.nombre
             """
         )
