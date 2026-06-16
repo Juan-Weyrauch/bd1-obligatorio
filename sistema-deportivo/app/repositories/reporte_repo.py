@@ -100,6 +100,46 @@ CONSULTAS = {
         HAVING inasistencias >= 3
         ORDER BY inasistencias DESC, e.apellido
     """,
+    
+ # 8) Consultas adicionales propuestas por el equipo
+    # 8.a) Lista de espera por actividad (con la posicion de cada estudiante)
+    "lista-de-espera": """
+        SELECT a.nombre AS actividad,
+               e.documento,
+               CONCAT(e.nombre, ' ', e.apellido) AS estudiante,
+               i.posicion_espera
+        FROM inscripcion i
+        JOIN actividad a ON a.id_actividad = i.id_actividad
+        JOIN estudiante e ON e.id_estudiante = i.id_estudiante
+        WHERE i.estado = 'en_espera'
+        ORDER BY a.nombre, i.posicion_espera
+    """,
+
+    # 8.b) Uso de cada espacio deportivo (actividades e inscriptos confirmados)
+    "uso-de-espacios": """
+        SELECT esp.nombre AS espacio,
+               esp.ubicacion,
+               COUNT(DISTINCT a.id_actividad) AS actividades,
+               COUNT(i.id_inscripcion) AS inscriptos_confirmados
+        FROM espacio esp
+        LEFT JOIN actividad a ON a.id_espacio = esp.id_espacio
+        LEFT JOIN inscripcion i
+               ON i.id_actividad = a.id_actividad AND i.estado = 'confirmada'
+        GROUP BY esp.id_espacio, esp.nombre, esp.ubicacion
+        ORDER BY inscriptos_confirmados DESC, esp.nombre
+    """,
+
+    # 8.c) Estudiantes mas activos (ranking por inscripciones confirmadas)
+    "estudiantes-mas-activos": """
+        SELECT e.documento,
+               CONCAT(e.nombre, ' ', e.apellido) AS estudiante,
+               COUNT(i.id_inscripcion) AS inscripciones_confirmadas
+        FROM estudiante e
+        JOIN inscripcion i
+             ON i.id_estudiante = e.id_estudiante AND i.estado = 'confirmada'
+        GROUP BY e.id_estudiante, e.documento, e.nombre, e.apellido
+        ORDER BY inscripciones_confirmadas DESC, e.apellido
+    """,
 }
 
 
