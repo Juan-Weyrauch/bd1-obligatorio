@@ -1,93 +1,49 @@
-"""Capa de presentacion para Estudiante (ABM)."""
-from flask import (
-    Blueprint, render_template, request, redirect, url_for, flash
-)
+"""API JSON para Estudiante (ABM)."""
+from flask import Blueprint, request, jsonify
 from app.services import estudiante_service
-from app.services.estudiante_service import ReglaNegocioError
+from app.api_utils import renombrar
 
-bp = Blueprint("estudiantes", __name__, url_prefix="/estudiantes")
+bp = Blueprint("estudiantes", __name__)
 
-
-def _render_formulario(estudiante, modo):
-    carreras = estudiante_service.listar_carreras_para_formulario()
-    return render_template(
-        "estudiantes/form.html",
-        estudiante=estudiante,
-        carreras=carreras,
-        modo=modo,
-    )
+# El repo trae 'carrera_nombre'/'facultad_nombre'; la SPA usa 'carrera'/'facultad'.
+MAPEO = {"carrera_nombre": "carrera", "facultad_nombre": "facultad"}
 
 
-@bp.route("/")
+@bp.route("/estudiantes", methods=["GET"])
 def listar():
-    estudiantes = estudiante_service.listar_estudiantes()
-    return render_template("estudiantes/listar.html", estudiantes=estudiantes)
+    return jsonify(renombrar(estudiante_service.listar_estudiantes(), MAPEO))
 
 
-@bp.route("/nuevo", methods=["GET", "POST"])
-def nuevo():
-    if request.method == "POST":
-        estudiante = {
-            "documento": request.form.get("documento", ""),
-            "nombre": request.form.get("nombre", ""),
-            "apellido": request.form.get("apellido", ""),
-            "email": request.form.get("email", ""),
-            "id_carrera": request.form.get("id_carrera", ""),
-        }
-        try:
-            estudiante_service.crear_estudiante(
-                estudiante["documento"],
-                estudiante["nombre"],
-                estudiante["apellido"],
-                estudiante["email"],
-                estudiante["id_carrera"],
-            )
-            flash("Estudiante creado correctamente.", "success")
-            return redirect(url_for("estudiantes.listar"))
-        except ReglaNegocioError as e:
-            flash(str(e), "danger")
-            return _render_formulario(estudiante, "crear")
-    return _render_formulario(None, "crear")
-
-
-@bp.route("/<int:id_estudiante>/editar", methods=["GET", "POST"])
-def editar(id_estudiante):
-    if request.method == "POST":
-        estudiante = {
-            "id_estudiante": id_estudiante,
-            "documento": request.form.get("documento", ""),
-            "nombre": request.form.get("nombre", ""),
-            "apellido": request.form.get("apellido", ""),
-            "email": request.form.get("email", ""),
-            "id_carrera": request.form.get("id_carrera", ""),
-        }
-        try:
-            estudiante_service.actualizar_estudiante(
-                id_estudiante,
-                estudiante["documento"],
-                estudiante["nombre"],
-                estudiante["apellido"],
-                estudiante["email"],
-                estudiante["id_carrera"],
-            )
-            flash("Estudiante actualizado correctamente.", "success")
-            return redirect(url_for("estudiantes.listar"))
-        except ReglaNegocioError as e:
-            flash(str(e), "danger")
-            return _render_formulario(estudiante, "editar")
+@bp.route("/estudiantes", methods=["POST"])
+def crear():
+    datos = request.get_json(silent=True) or {}
     try:
-        estudiante = estudiante_service.obtener_estudiante(id_estudiante)
-    except ReglaNegocioError as e:
-        flash(str(e), "danger")
-        return redirect(url_for("estudiantes.listar"))
-    return _render_formulario(estudiante, "editar")
+        nuevo_id = estudiante_service.crear_estudiante(
+            datos.get("documento"), datos.get("nombre"), datos.get("apellido"),
+            datos.get("email"), datos.get("id_carrera"),
+        )
+        return jsonify({"id_estudiante": nuevo_id, "mensaje": "Estudiante creado."}), 201
+    except estudiante_service.ReglaNegocioError as e:
+        return jsonify({"error": str(e)}), 400
 
 
-@bp.route("/<int:id_estudiante>/eliminar", methods=["POST"])
+@bp.route("/estudiantes/<int:id_estudiante>", methods=["PUT"])
+def actualizar(id_estudiante):
+    datos = request.get_json(silent=True) or {}
+    try:
+        estudiante_service.actualizar_estudiante(
+            id_estudiante, datos.get("documento"), datos.get("nombre"),
+            datos.get("apellido"), datos.get("email"), datos.get("id_carrera"),
+        )
+        return jsonify({"mensaje": "Estudiante actualizado."})
+    except estudiante_service.ReglaNegocioError as e:
+        return jsonify({"error": str(e)}), 400
+
+
+@bp.route("/estudiantes/<int:id_estudiante>", methods=["DELETE"])
 def eliminar(id_estudiante):
     try:
         estudiante_service.eliminar_estudiante(id_estudiante)
-        flash("Estudiante eliminado.", "success")
-    except ReglaNegocioError as e:
-        flash(str(e), "danger")
-    return redirect(url_for("estudiantes.listar"))
+        return jsonify({"mensaje": "Estudiante eliminado."})
+    except estudiante_service.ReglaNegocioError as e:
+        return jsonify({"error": str(e)}), 400

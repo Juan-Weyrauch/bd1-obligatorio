@@ -1,107 +1,50 @@
-"""Capa de presentacion para Actividad (ABM)."""
-from flask import (
-    Blueprint, render_template, request, redirect, url_for, flash
-)
+"""API JSON para Actividad (ABM)."""
+from flask import Blueprint, request, jsonify
 from app.services import actividad_service
-from app.services.actividad_service import (
-    ReglaNegocioError, DIAS_SEMANA, ESTADOS_ACTIVIDAD
-)
+from app.api_utils import renombrar
 
-bp = Blueprint("actividades", __name__, url_prefix="/actividades")
+bp = Blueprint("actividades", __name__)
 
-
-def _render_formulario(actividad, modo):
-    disciplinas = actividad_service.listar_disciplinas_para_formulario()
-    espacios = actividad_service.listar_espacios_para_formulario()
-    return render_template(
-        "actividades/form.html",
-        actividad=actividad,
-        disciplinas=disciplinas,
-        espacios=espacios,
-        dias_semana=DIAS_SEMANA,
-        estados=ESTADOS_ACTIVIDAD,
-        modo=modo,
-    )
+MAPEO = {"disciplina_nombre": "disciplina", "espacio_nombre": "espacio"}
 
 
-@bp.route("/")
+@bp.route("/actividades", methods=["GET"])
 def listar():
-    actividades = actividad_service.listar_actividades()
-    return render_template("actividades/listar.html", actividades=actividades)
+    return jsonify(renombrar(actividad_service.listar_actividades(), MAPEO))
 
 
-@bp.route("/nueva", methods=["GET", "POST"])
-def nueva():
-    if request.method == "POST":
-        actividad = {
-            "nombre": request.form.get("nombre", ""),
-            "id_disciplina": request.form.get("id_disciplina", ""),
-            "id_espacio": request.form.get("id_espacio", ""),
-            "cupo_maximo": request.form.get("cupo_maximo", ""),
-            "dia_semana": request.form.get("dia_semana", ""),
-            "horario": request.form.get("horario", ""),
-            "estado": request.form.get("estado", ""),
-        }
-        try:
-            actividad_service.crear_actividad(
-                actividad["nombre"],
-                actividad["id_disciplina"],
-                actividad["id_espacio"],
-                actividad["cupo_maximo"],
-                actividad["dia_semana"],
-                actividad["horario"],
-                actividad["estado"],
-            )
-            flash("Actividad creada correctamente.", "success")
-            return redirect(url_for("actividades.listar"))
-        except ReglaNegocioError as e:
-            flash(str(e), "danger")
-            return _render_formulario(actividad, "crear")
-    return _render_formulario(None, "crear")
-
-
-@bp.route("/<int:id_actividad>/editar", methods=["GET", "POST"])
-def editar(id_actividad):
-    if request.method == "POST":
-        actividad = {
-            "id_actividad": id_actividad,
-            "nombre": request.form.get("nombre", ""),
-            "id_disciplina": request.form.get("id_disciplina", ""),
-            "id_espacio": request.form.get("id_espacio", ""),
-            "cupo_maximo": request.form.get("cupo_maximo", ""),
-            "dia_semana": request.form.get("dia_semana", ""),
-            "horario": request.form.get("horario", ""),
-            "estado": request.form.get("estado", ""),
-        }
-        try:
-            actividad_service.actualizar_actividad(
-                id_actividad,
-                actividad["nombre"],
-                actividad["id_disciplina"],
-                actividad["id_espacio"],
-                actividad["cupo_maximo"],
-                actividad["dia_semana"],
-                actividad["horario"],
-                actividad["estado"],
-            )
-            flash("Actividad actualizada correctamente.", "success")
-            return redirect(url_for("actividades.listar"))
-        except ReglaNegocioError as e:
-            flash(str(e), "danger")
-            return _render_formulario(actividad, "editar")
+@bp.route("/actividades", methods=["POST"])
+def crear():
+    d = request.get_json(silent=True) or {}
     try:
-        actividad = actividad_service.obtener_actividad(id_actividad)
-    except ReglaNegocioError as e:
-        flash(str(e), "danger")
-        return redirect(url_for("actividades.listar"))
-    return _render_formulario(actividad, "editar")
+        nuevo_id = actividad_service.crear_actividad(
+            d.get("nombre"), d.get("id_disciplina"), d.get("id_espacio"),
+            d.get("cupo_maximo"), d.get("dia_semana"), d.get("horario"),
+            d.get("estado"),
+        )
+        return jsonify({"id_actividad": nuevo_id, "mensaje": "Actividad creada."}), 201
+    except actividad_service.ReglaNegocioError as e:
+        return jsonify({"error": str(e)}), 400
 
 
-@bp.route("/<int:id_actividad>/eliminar", methods=["POST"])
+@bp.route("/actividades/<int:id_actividad>", methods=["PUT"])
+def actualizar(id_actividad):
+    d = request.get_json(silent=True) or {}
+    try:
+        actividad_service.actualizar_actividad(
+            id_actividad, d.get("nombre"), d.get("id_disciplina"),
+            d.get("id_espacio"), d.get("cupo_maximo"), d.get("dia_semana"),
+            d.get("horario"), d.get("estado"),
+        )
+        return jsonify({"mensaje": "Actividad actualizada."})
+    except actividad_service.ReglaNegocioError as e:
+        return jsonify({"error": str(e)}), 400
+
+
+@bp.route("/actividades/<int:id_actividad>", methods=["DELETE"])
 def eliminar(id_actividad):
     try:
         actividad_service.eliminar_actividad(id_actividad)
-        flash("Actividad eliminada.", "success")
-    except ReglaNegocioError as e:
-        flash(str(e), "danger")
-    return redirect(url_for("actividades.listar"))
+        return jsonify({"mensaje": "Actividad eliminada."})
+    except actividad_service.ReglaNegocioError as e:
+        return jsonify({"error": str(e)}), 400

@@ -1,6 +1,48 @@
 // script.js - Lógica del frontend
 
-const API = "http://localhost:5000";
+// La SPA se sirve desde el mismo Flask, asi que las rutas son relativas.
+const API = "";
+
+// Helper: crea (POST) o actualiza (PUT) un recurso y avisa si el backend lo rechaza.
+async function enviarRecurso(base, id, datos) {
+  const url = id ? `${API}/${base}/${id}` : `${API}/${base}`;
+  const respuesta = await fetch(url, {
+    method: id ? "PUT" : "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(datos),
+  });
+  const data = await respuesta.json().catch(() => ({}));
+  if (!respuesta.ok) alert("Error: " + (data.error || "no se pudo guardar"));
+  return respuesta.ok;
+}
+
+// Helper: elimina un recurso y avisa si el backend lo rechaza (ej. clave foranea).
+async function borrarRecurso(base, id) {
+  const respuesta = await fetch(`${API}/${base}/${id}`, { method: "DELETE" });
+  const data = await respuesta.json().catch(() => ({}));
+  if (!respuesta.ok) alert("Error: " + (data.error || "no se pudo eliminar"));
+  return respuesta.ok;
+}
+
+
+// Helper: trae una lista del backend SIN romper si la respuesta no es un array.
+// Si algo falla, avisa, lo loguea en consola y devuelve [] para no frenar la UI.
+async function obtenerJSON(url) {
+  try {
+    const r = await fetch(`${API}${url}`);
+    const data = await r.json().catch(() => null);
+    if (!r.ok || !Array.isArray(data)) {
+      console.error("Respuesta inesperada de", url, "->", r.status, data);
+      alert(`No se pudieron cargar los datos de ${url} (revisá la consola).`);
+      return [];
+    }
+    return data;
+  } catch (e) {
+    console.error("Falló el fetch de", url, e);
+    alert(`No se pudo conectar con ${url}. ¿El servidor está en el puerto 5000?`);
+    return [];
+  }
+}
 
 // ============================================================
 // NAVEGACIÓN
@@ -135,11 +177,8 @@ async function guardarEstudiante() {
     return;
   }
 
-  if (id) {
-    await fetch(`${API}/estudiantes/${id}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(datos) });
-  } else {
-    await fetch(`${API}/estudiantes`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(datos) });
-  }
+  const ok = await enviarRecurso("estudiantes", id, datos);
+  if (!ok) return;
 
   cerrarModal("modal-estudiante");
   cargarEstudiantes();
@@ -162,8 +201,7 @@ async function editarEstudiante(id) {
 
 async function borrarEstudiante(id) {
   if (!confirm("¿Seguro que querés eliminar este estudiante?")) return;
-  await fetch(`${API}/estudiantes/${id}`, { method: "DELETE" });
-  cargarEstudiantes();
+  if (await borrarRecurso("estudiantes", id)) cargarEstudiantes();
 }
 
 // ============================================================
@@ -198,7 +236,7 @@ async function cargarActividades() {
 }
 
 async function cargarOpcionesDisciplinas() {
-  const disciplinas = await fetch(`${API}/disciplinas`).then(r => r.json());
+  const disciplinas = await obtenerJSON("/disciplinas");
   const select = document.getElementById("act-disciplina");
   select.innerHTML = "";
   disciplinas.forEach(d => {
@@ -207,7 +245,7 @@ async function cargarOpcionesDisciplinas() {
 }
 
 async function cargarOpcionesEspacios() {
-  const espacios = await fetch(`${API}/espacios`).then(r => r.json());
+  const espacios = await obtenerJSON("/espacios");
   const select = document.getElementById("act-espacio");
   select.innerHTML = "";
   espacios.forEach(e => {
@@ -240,11 +278,8 @@ async function guardarActividad() {
     return;
   }
 
-  if (id) {
-    await fetch(`${API}/actividades/${id}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(datos) });
-  } else {
-    await fetch(`${API}/actividades`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(datos) });
-  }
+  const ok = await enviarRecurso("actividades", id, datos);
+  if (!ok) return;
 
   cerrarModal("modal-actividad");
   cargarActividades();
@@ -253,7 +288,7 @@ async function guardarActividad() {
 async function editarActividad(id) {
   await cargarOpcionesDisciplinas();
   await cargarOpcionesEspacios();
-  const datos = await fetch(`${API}/actividades`).then(r => r.json());
+  const datos = await obtenerJSON("/actividades");
   const act = datos.find(a => a.id_actividad === id);
 
   document.getElementById("act-id").value      = act.id_actividad;
@@ -262,6 +297,8 @@ async function editarActividad(id) {
   document.getElementById("act-dia").value      = act.dia_semana;
   document.getElementById("act-horario").value  = act.horario;
   document.getElementById("act-estado").value   = act.estado;
+  document.getElementById("act-disciplina").value = act.id_disciplina;
+  document.getElementById("act-espacio").value    = act.id_espacio;
   document.getElementById("titulo-modal-actividad").textContent = "Editar actividad";
 
   document.getElementById("modal-actividad").classList.add("abierto");
@@ -269,8 +306,7 @@ async function editarActividad(id) {
 
 async function borrarActividad(id) {
   if (!confirm("¿Seguro que querés eliminar esta actividad?")) return;
-  await fetch(`${API}/actividades/${id}`, { method: "DELETE" });
-  cargarActividades();
+  if (await borrarRecurso("actividades", id)) cargarActividades();
 }
 
 // ============================================================
@@ -344,8 +380,7 @@ async function guardarInscripcion() {
 
 async function cancelarInscripcion(id) {
   if (!confirm("¿Seguro que querés cancelar esta inscripción?")) return;
-  await fetch(`${API}/inscripciones/${id}`, { method: "DELETE" });
-  cargarInscripciones();
+  if (await borrarRecurso("inscripciones", id)) cargarInscripciones();
 }
 
 // ============================================================
@@ -393,7 +428,7 @@ async function guardarAsistencia() {
 // ============================================================
 
 async function cargarDisciplinas() {
-  const datos = await fetch(`${API}/disciplinas`).then(r => r.json());
+  const datos = await obtenerJSON("/disciplinas");
   const tbody = document.getElementById("tabla-disciplinas");
   tbody.innerHTML = "";
 
@@ -424,11 +459,8 @@ async function guardarDisciplina() {
 
   if (!datos.nombre) { alert("Ingresá un nombre."); return; }
 
-  if (id) {
-    await fetch(`${API}/disciplinas/${id}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(datos) });
-  } else {
-    await fetch(`${API}/disciplinas`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(datos) });
-  }
+  const ok = await enviarRecurso("disciplinas", id, datos);
+  if (!ok) return;
 
   cerrarModal("modal-disciplina");
   cargarDisciplinas();
@@ -443,8 +475,7 @@ function editarDisciplina(id, nombre) {
 
 async function borrarDisciplina(id) {
   if (!confirm("¿Seguro que querés eliminar esta disciplina?")) return;
-  await fetch(`${API}/disciplinas/${id}`, { method: "DELETE" });
-  cargarDisciplinas();
+  if (await borrarRecurso("disciplinas", id)) cargarDisciplinas();
 }
 
 // ============================================================
@@ -488,11 +519,8 @@ async function guardarEspacio() {
 
   if (!datos.nombre || !datos.ubicacion) { alert("Completá todos los campos."); return; }
 
-  if (id) {
-    await fetch(`${API}/espacios/${id}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(datos) });
-  } else {
-    await fetch(`${API}/espacios`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(datos) });
-  }
+  const ok = await enviarRecurso("espacios", id, datos);
+  if (!ok) return;
 
   cerrarModal("modal-espacio");
   cargarEspacios();
@@ -508,8 +536,7 @@ function editarEspacio(id, nombre, ubicacion) {
 
 async function borrarEspacio(id) {
   if (!confirm("¿Seguro que querés eliminar este espacio?")) return;
-  await fetch(`${API}/espacios/${id}`, { method: "DELETE" });
-  cargarEspacios();
+  if (await borrarRecurso("espacios", id)) cargarEspacios();
 }
 
 // ============================================================

@@ -1,58 +1,38 @@
-"""Capa de presentacion para Inscripcion."""
-from flask import (
-    Blueprint, render_template, request, redirect, url_for, flash
-)
+"""API JSON para Inscripcion."""
+from flask import Blueprint, request, jsonify
 from app.services import inscripcion_service
-from app.services.inscripcion_service import ReglaNegocioError
+from app.api_utils import renombrar
 
-bp = Blueprint("inscripciones", __name__, url_prefix="/inscripciones")
+bp = Blueprint("inscripciones", __name__)
 
-
-def _render_formulario(inscripcion):
-    estudiantes = inscripcion_service.listar_estudiantes_para_formulario()
-    actividades = inscripcion_service.listar_actividades_para_formulario()
-    return render_template(
-        "inscripciones/form.html",
-        inscripcion=inscripcion,
-        estudiantes=estudiantes,
-        actividades=actividades,
-    )
+MAPEO = {
+    "estudiante_nombre": "nombre",
+    "estudiante_apellido": "apellido",
+    "actividad_nombre": "actividad",
+}
 
 
-@bp.route("/")
+@bp.route("/inscripciones", methods=["GET"])
 def listar():
-    inscripciones = inscripcion_service.listar_inscripciones()
-    return render_template(
-        "inscripciones/listar.html",
-        inscripciones=inscripciones,
-    )
+    return jsonify(renombrar(inscripcion_service.listar_inscripciones(), MAPEO))
 
 
-@bp.route("/nueva", methods=["GET", "POST"])
-def nueva():
-    if request.method == "POST":
-        inscripcion = {
-            "id_estudiante": request.form.get("id_estudiante", ""),
-            "id_actividad": request.form.get("id_actividad", ""),
-        }
-        try:
-            mensaje = inscripcion_service.crear_inscripcion(
-                inscripcion["id_estudiante"],
-                inscripcion["id_actividad"],
-            )
-            flash(mensaje, "success")
-            return redirect(url_for("inscripciones.listar"))
-        except ReglaNegocioError as e:
-            flash(str(e), "danger")
-            return _render_formulario(inscripcion)
-    return _render_formulario(None)
+@bp.route("/inscripciones", methods=["POST"])
+def crear():
+    d = request.get_json(silent=True) or {}
+    try:
+        mensaje = inscripcion_service.crear_inscripcion(
+            d.get("id_estudiante"), d.get("id_actividad"),
+        )
+        return jsonify({"mensaje": mensaje}), 201
+    except inscripcion_service.ReglaNegocioError as e:
+        return jsonify({"error": str(e)}), 400
 
 
-@bp.route("/<int:id_inscripcion>/cancelar", methods=["POST"])
+@bp.route("/inscripciones/<int:id_inscripcion>", methods=["DELETE"])
 def cancelar(id_inscripcion):
     try:
         mensaje = inscripcion_service.cancelar_inscripcion(id_inscripcion)
-        flash(mensaje, "success")
-    except ReglaNegocioError as e:
-        flash(str(e), "danger")
-    return redirect(url_for("inscripciones.listar"))
+        return jsonify({"mensaje": mensaje})
+    except inscripcion_service.ReglaNegocioError as e:
+        return jsonify({"error": str(e)}), 400
