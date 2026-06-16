@@ -6,7 +6,7 @@ espera, registro de asistencias y reportes.
 
 ## Stack
 
-- **Base de datos:** MySQL 8.0 (relacional, SQL puro)
+- **Base de datos:** MySQL 8.0
 - **Backend:** Python + Flask
 - **Frontend:** SPA en HTML/CSS/JavaScript (servida por el propio Flask)
 - **Driver:** `mysql-connector-python`
